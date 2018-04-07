@@ -87,7 +87,6 @@
 from robosim import *
 from random import random, shuffle, randint
 import time
-import math
 import sys
 import atexit
 
@@ -173,6 +172,7 @@ class AgentTypeA(object):
     teamname = "Equipe Alpha" # A modifier avec le nom de votre équipe
 
     def stepController(self):
+        import math
         '''
         vt = 1
         vr = 0
@@ -211,7 +211,7 @@ class AgentTypeA(object):
             
             return res/2.;
         '''
-
+        
         color( (0,255,0) )
         circle( *self.getRobot().get_centroid() , r = 22) # je dessine un rond bleu autour de ce robot
         
@@ -250,8 +250,6 @@ class AgentTypeA(object):
         
         # Perceptron: a linear combination of sensory inputs with weights (=parameters). Use an additional parameters as a bias, and apply hyperbolic tangeant to ensure result is in [-1,+1]
         t = math.tanh( sensorMinus80 * params[0] + sensorMinus40 * params[1] + sensorMinus20 * params[2] + sensorPlus20 * params[3] + sensorPlus40 * params[4] + sensorPlus80 * params[5] + params[6] )
-        if t < 0:
-            t = 0
         translation =  t
         rotation =  math.tanh( sensorMinus80 * params[7] + sensorMinus40 * params[8] + sensorMinus20 * params[9] + sensorPlus20 * params[10] + sensorPlus40 * params[11] + sensorPlus80 * params[12] + params[13] )
         #translation =  math.tanh( sensorMinus40 * params[0] + sensorMinus20 * params[1] + sensorPlus20 * params[2] + sensorPlus40 * params[3] + params[4] ) 

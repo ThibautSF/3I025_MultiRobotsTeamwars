@@ -1,3 +1,7 @@
 eclipse.preferences.version=1
 encoding/multirobots_teamwars.py=utf-8
+encoding/multirobots_teamwars_orig.py=utf-8
 encoding/robot_randomsearch.py=utf-8
+encoding/robot_randomsearch_cases.py=utf-8
+encoding/robot_randomsearch_follow.py=utf-8
+encoding/robot_randomsearch_optimisation.py=utf-8
