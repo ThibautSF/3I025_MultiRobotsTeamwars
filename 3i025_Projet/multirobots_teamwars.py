@@ -113,7 +113,7 @@ screen_height=512 #512,768,... -- multiples de 32
 
 maxIterations = 6000 # infinite: -1
 showSensors = False
-frameskip = 4   # 0: no-skip. >1: skip n-1 frames
+frameskip = 20   # 0: no-skip. >1: skip n-1 frames
 verbose = False # permet d'afficher le suivi des agents (informations dans la console)
 
 occupancyGrid = []
@@ -248,10 +248,30 @@ class AgentTypeA(object):
         
         params = [-4.834911999170798e-11, -1.19264193472545e-10, -1.691716165131968e-10, 2.168729429890551e-12, 7.41605693397001e-12, -3.2707705099795744e-11, 0.999999999769799, -1.0, -1.0, -0.9999999998272344, 0.999999999842633, 1.0, 1.0, -2.897593440917005e-10]
         
+        list_sensors = sensors[self.robot]
+        
         # Perceptron: a linear combination of sensory inputs with weights (=parameters). Use an additional parameters as a bias, and apply hyperbolic tangeant to ensure result is in [-1,+1]
         t = math.tanh( sensorMinus80 * params[0] + sensorMinus40 * params[1] + sensorMinus20 * params[2] + sensorPlus20 * params[3] + sensorPlus40 * params[4] + sensorPlus80 * params[5] + params[6] )
+        
+        #debut test si l'on suit:
+        nearest = -1
+        min_dist = -1
+        for i,impact in enumerate(list_sensors):
+            if impact.dist_from_border < maxSensorDistance and impact.layer == 'joueur' :
+                playerTMP = impact.sprite
+                if playerTMP.numero>3:
+                    if impact.dist_from_border<min_dist or nearest==-1:
+                        nearest = i
+                        min_dist = impact.dist_from_border
+            
+        if nearest!=-1:
+            r = (float(SensorBelt[nearest])/360.)
+        else:
+            r = math.tanh( sensorMinus80 * params[7] + sensorMinus40 * params[8] + sensorMinus20 * params[9] + sensorPlus20 * params[10] + sensorPlus40 * params[11] + sensorPlus80 * params[12] + params[13] )
+        #fin de test si l'on suit
+        
         translation =  t
-        rotation =  math.tanh( sensorMinus80 * params[7] + sensorMinus40 * params[8] + sensorMinus20 * params[9] + sensorPlus20 * params[10] + sensorPlus40 * params[11] + sensorPlus80 * params[12] + params[13] )
+        rotation =  r
         #translation =  math.tanh( sensorMinus40 * params[0] + sensorMinus20 * params[1] + sensorPlus20 * params[2] + sensorPlus40 * params[3] + params[4] ) 
         #rotation =  math.tanh( sensorMinus40 * params[5] + sensorMinus20 * params[6] + sensorPlus20 * params[7] + sensorPlus40 * params[8] + params[9] )
 
