@@ -173,71 +173,12 @@ class AgentTypeA(object):
 
     def stepController(self):
         import math
-        '''
-        vt = 1
-        vr = 0
-        
-        def suivreBot(list_sensors):
-            nearest = -1
-            min_dist = -1
-            for i,impact in enumerate(list_sensors):
-                if impact.dist_from_border < maxSensorDistance and impact.layer == 'joueur' :
-                    playerTMP = impact.sprite
-                    if playerTMP.numero>3:
-                        if impact.dist_from_border<min_dist or nearest==-1:
-                            nearest = i
-                            min_dist = impact.dist_from_border
-            
-            if nearest!=-1:
-                self.setRotationValue(float(SensorBelt[nearest])/360.)
-                return True
-            
-            return False
-        
-        def eviterObstacle(list_sensors):
-            sensors_weight = [0.1,0.4,0.6,0.9,-0.9,-0.6,-0.4,-0.1]
-            sensors_dist = list()
-            for i,impact in enumerate(list_sensors):
-                i_dist = impact.dist_from_border
-                if i_dist > maxSensorDistance:
-                    i_dist = maxSensorDistance
-                
-                val = (maxSensorDistance-i_dist)/maxSensorDistance
-                sensors_dist.append(val)
-            
-            res = 0.
-            for i in range(8):
-                res += sensors_weight[i]*sensors_dist[i]
-            
-            return res/2.;
-        '''
         
         color( (0,255,0) )
         circle( *self.getRobot().get_centroid() , r = 22) # je dessine un rond bleu autour de ce robot
         
-        '''
-        #print "robot #", self.id, " -- step"
-
-        p = self.robot
-
-        # actions
-        sensor_infos = sensors[p] # sensor_infos est une liste de namedtuple (un par capteur).
-        #print "sensor_infos: ", sensor_infos[0].dist_from_border
-        
-        if self.id <2:
-            if not suivreBot(sensor_infos):
-                vr = eviterObstacle(sensor_infos)
-        else:
-            vr = eviterObstacle(sensor_infos)
-        
-        self.setRotationValue(vr)
-        self.setTranslationValue(vt) # normalisé -1,+1
-        
-        return
-        '''
-        
-        translation = 0
-        rotation = 0
+        t = 0
+        r = 0
         
         sensorMinus80 = self.getDistanceAtSensor(1)
         sensorMinus40 = self.getDistanceAtSensor(2)
@@ -253,26 +194,29 @@ class AgentTypeA(object):
         # Perceptron: a linear combination of sensory inputs with weights (=parameters). Use an additional parameters as a bias, and apply hyperbolic tangeant to ensure result is in [-1,+1]
         t = math.tanh( sensorMinus80 * params[0] + sensorMinus40 * params[1] + sensorMinus20 * params[2] + sensorPlus20 * params[3] + sensorPlus40 * params[4] + sensorPlus80 * params[5] + params[6] )
         
-        #debut test si l'on suit:
-        nearest = -1
-        min_dist = -1
-        for i,impact in enumerate(list_sensors):
-            if impact.dist_from_border < maxSensorDistance and impact.layer == 'joueur' :
-                playerTMP = impact.sprite
-                if playerTMP.teamname !=self.teamname:
-                    if impact.dist_from_border<min_dist or nearest==-1:
-                        nearest = i
-                        min_dist = impact.dist_from_border
-            
-        if nearest!=-1:
-            r = (float(SensorBelt[nearest])/360.)
+        if self.id%2 == 0:
+            #debut test si l'on suit:
+            nearest = -1
+            min_dist = -1
+            for i,impact in enumerate(list_sensors):
+                if impact.dist_from_border < maxSensorDistance and impact.layer == 'joueur' :
+                    playerTMP = impact.sprite
+                    if playerTMP.teamname !=self.teamname:
+                        if impact.dist_from_border<min_dist or nearest==-1:
+                            nearest = i
+                            min_dist = impact.dist_from_border
+                
+            if nearest!=-1:
+                r = (float(SensorBelt[nearest])/360.)
+            else:
+                r = math.tanh( sensorMinus80 * params[7] + sensorMinus40 * params[8] + sensorMinus20 * params[9] + sensorPlus20 * params[10] + sensorPlus40 * params[11] + sensorPlus80 * params[12] + params[13] )
+            #fin de test si l'on suit
         else:
             r = math.tanh( sensorMinus80 * params[7] + sensorMinus40 * params[8] + sensorMinus20 * params[9] + sensorPlus20 * params[10] + sensorPlus40 * params[11] + sensorPlus80 * params[12] + params[13] )
-        #fin de test si l'on suit
-        print r
+        #print r
         
         new_etat = self.robot.get_centroid()[0]*32*16  + self.robot.get_centroid()[1]
-        print new_etat
+        #print new_etat
         if self.etat == new_etat:
             self.etat = -3
             r = 1
@@ -431,10 +375,10 @@ class AgentTypeB(object):
         else:
             r = math.tanh( sensorMinus80 * params[7] + sensorMinus40 * params[8] + sensorMinus20 * params[9] + sensorPlus20 * params[10] + sensorPlus40 * params[11] + sensorPlus80 * params[12] + params[13] )
         #fin de test si l'on suit
-        print r
+        #print r
         
         new_etat = self.robot.get_centroid()[0]*32*16  + self.robot.get_centroid()[1]
-        print new_etat
+        #print new_etat
         if self.etat == new_etat:
             self.etat = -3
             r = 1
